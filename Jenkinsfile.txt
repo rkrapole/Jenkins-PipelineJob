@@ -1,0 +1,24 @@
+node{
+
+   def tomcatWeb = 'C:\\Program Files\\Apache Software Foundation\\Tomcat 9.0\\webapps'
+   def tomcatBin = 'C:\\Program Files\\Apache Software Foundation\\Tomcat 9.0\\bin'
+   
+   stage('Clone'){
+     git 'https://github.com/rkrapole/RkmavenProject_Test.git'
+   }
+   stage('Build'){
+      // Get maven home path
+      def mvnHome =  tool name: 'maven', type: 'maven'   
+      bat "${mvnHome}/bin/mvn package"
+      }
+
+   stage('Deploy'){
+     bat "copy target\\RkmavenProject.war \"${tomcatWeb}\\RkmavenProject.war\""
+   }
+   stage('Pick Test'){
+     git 'https://github.com/rkrapole/Python-TestWebApp.git'
+   }
+   stage('Run Test'){
+     'python3 TestWebAppModule.py'
+   }
+}
